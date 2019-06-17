@@ -18,25 +18,31 @@ func checkIntList(t *testing.T, l *List, items []int) {
 
 	for i, item := range items {
 		if curr.Value() != item {
-			t.Errorf("curr.Value() = %v, want %v", curr.Value(), item)
+			t.Fatalf("curr.Value() = %v, want %v", curr.Value(), item)
 		}
 		if i == 0 {
 			if curr.Prev() != nil {
-				t.Errorf("first.Prev() should return nil, got %p", curr.Prev())
+				t.Fatalf("first.Prev() should return nil, got %p", curr.Prev())
+			}
+			if l.First() != curr {
+				t.Fatalf("First() = %p, want %p", l.First(), curr)
 			}
 		} else {
 			if curr.Prev().Value() != items[i-1] {
-				t.Errorf("list.Prev().Value() = %v, want %v", curr.Prev().Value(), items[i-1])
+				t.Fatalf("list.Prev().Value() = %v, want %v", curr.Prev().Value(), items[i-1])
 			}
 		}
 
 		if i == len(items) - 1 {
 			if curr.Next() != nil {
-				t.Errorf("last.Next() should return nil, got %p", curr.Next())
+				t.Fatalf("last.Next() should return nil, got %p", curr.Next())
+			}
+			if l.Last() != curr {
+				t.Fatalf("Last() = %p, want %p", l.Last(), curr)
 			}
 		} else {
 			if curr.Next().Value() != items[i+1] {
-				t.Errorf("list.Next().Value() = %v, want %v", curr.Next().Value(), items[i+1])
+				t.Fatalf("list.Next().Value() = %v, want %v", curr.Next().Value(), items[i+1])
 			}
 		}
 		curr = curr.Next()
@@ -51,4 +57,28 @@ func TestList(t *testing.T) {
 	list.PushFront(3)
 	list.PushFront(5)
 	checkIntList(t, list, []int{5, 3, 1})
+	
+	list = &List{}
+	list.PushBack(3)
+	checkIntList(t, list, []int{3})
+	list.PushBack(5)
+	list.PushBack(8)
+	checkIntList(t, list, []int{3, 5, 8})
+}
+
+func TestItemRemove(t *testing.T) {
+	list := &List{}
+	list.PushBack(1)
+	list.PushBack(2)
+	list.PushBack(3)
+	list.PushBack(4)
+	list.PushBack(5)
+	list.PushBack(6)
+
+	list.First().Remove()
+	checkIntList(t, list, []int{2, 3, 4, 5, 6})
+	list.Last().Remove()
+	checkIntList(t, list, []int{2, 3, 4, 5})
+	list.First().Next().Remove()
+	checkIntList(t, list, []int{2, 4, 5})
 }
