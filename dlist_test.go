@@ -81,4 +81,8 @@ func TestItemRemove(t *testing.T) {
 	checkIntList(t, list, []int{2, 3, 4, 5})
 	list.First().Next().Remove()
 	checkIntList(t, list, []int{2, 4, 5})
+	list.First().Remove()
+	list.First().Remove()
+	list.First().Remove()
+	checkIntList(t, list, []int{})
 }
